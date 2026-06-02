@@ -39,6 +39,12 @@ jobs:
     - name: Composer Abhängigkeiten installieren
       run: composer install --no-progress --no-suggest --prefer-dist
 
+    # NEU: Dieser Schritt erstellt die Datenbank automatisch auf GitHub, so wie Symfony sie haben will!
+    - name: Test-Datenbank erstellen
+      env:
+        DATABASE_URL: "postgresql://symfony_user:secret123@127.0.0.1:5432/inventar_db_test?serverVersion=16&charset=utf8"
+      run: php bin/console doctrine:database:create --env=test
+
     - name: Test-Datenbank Tabellen erstellen
       env:
         DATABASE_URL: "postgresql://symfony_user:secret123@127.0.0.1:5432/inventar_db_test?serverVersion=16&charset=utf8"
@@ -48,3 +54,4 @@ jobs:
       env:
         DATABASE_URL: "postgresql://symfony_user:secret123@127.0.0.1:5432/inventar_db_test?serverVersion=16&charset=utf8"
       run: php bin/phpunit
+
