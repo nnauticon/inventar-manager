@@ -1,0 +1,39 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Inventar index{% endblock %}
+
+{% block body %}
+    <h1>Inventar index</h1>
+
+    <table class="table">
+        <thead>
+            <tr>
+                <th>Id</th>
+                <th>Name</th>
+                <th>SerialNumber</th>
+                <th>PurchasedAt</th>
+                <th>actions</th>
+            </tr>
+        </thead>
+        <tbody>
+        {% for inventar in inventars %}
+            <tr>
+                <td>{{ inventar.id }}</td>
+                <td>{{ inventar.name }}</td>
+                <td>{{ inventar.serialNumber }}</td>
+                <td>{{ inventar.purchasedAt ? inventar.purchasedAt|date('Y-m-d H:i:s') : '' }}</td>
+                <td>
+                    <a href="{{ path('app_inventar_show', {'id': inventar.id}) }}">show</a>
+                    <a href="{{ path('app_inventar_edit', {'id': inventar.id}) }}">edit</a>
+                </td>
+            </tr>
+        {% else %}
+            <tr>
+                <td colspan="5">no records found</td>
+            </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+
+    <a href="{{ path('app_inventar_new') }}">Create new</a>
+{% endblock %}

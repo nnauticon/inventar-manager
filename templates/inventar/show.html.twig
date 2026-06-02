@@ -1,0 +1,34 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Inventar{% endblock %}
+
+{% block body %}
+    <h1>Inventar</h1>
+
+    <table class="table">
+        <tbody>
+            <tr>
+                <th>Id</th>
+                <td>{{ inventar.id }}</td>
+            </tr>
+            <tr>
+                <th>Name</th>
+                <td>{{ inventar.name }}</td>
+            </tr>
+            <tr>
+                <th>SerialNumber</th>
+                <td>{{ inventar.serialNumber }}</td>
+            </tr>
+            <tr>
+                <th>PurchasedAt</th>
+                <td>{{ inventar.purchasedAt ? inventar.purchasedAt|date('Y-m-d H:i:s') : '' }}</td>
+            </tr>
+        </tbody>
+    </table>
+
+    <a href="{{ path('app_inventar_index') }}">back to list</a>
+
+    <a href="{{ path('app_inventar_edit', {'id': inventar.id}) }}">edit</a>
+
+    {{ include('inventar/_delete_form.html.twig') }}
+{% endblock %}
