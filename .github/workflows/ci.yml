@@ -1,0 +1,48 @@
+name: Symfony CI Pipeline
+
+on:
+  push:
+    branches: [ "main" ]
+  pull_request:
+    branches: [ "main" ]
+
+jobs:
+  tests:
+    runs-on: ubuntu-latest
+
+    services:
+      # Hier starten wir die PostgreSQL-Datenbank für GitHub
+      database:
+        image: postgres:16-alpine
+        env:
+          POSTGRES_DB: inventar_db_test
+          POSTGRES_USER: symfony_user
+          POSTGRES_PASSWORD: secret123
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+
+    steps:
+    - name: Code auschecken
+      uses: actions/checkout@v4
+
+    - name: PHP einrichten
+      uses: shivammathur/setup-php@v2
+      with:
+        php-version: '8.3'
+        extensions: pdo, pdo_pgsql
+        coverage: none
+
+    - name: Composer Abhängigkeiten installieren
+      run: composer install --no-progress --no-suggest --prefer-dist
+
+    - name: Test-Datenbank Tabellen erstellen
+      run: |
+        php bin/console doctrine:migrations:migrate --no-interaction --env=test
+
+    - name: Tests ausführen
+      run: php bin/phpunit
