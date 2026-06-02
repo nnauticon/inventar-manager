@@ -1,17 +1,8 @@
-name: Symfony CI Pipeline
-
-on:
-  push:
-    branches: [ "main" ]
-  pull_request:
-    branches: [ "main" ]
-
 jobs:
   tests:
     runs-on: ubuntu-latest
 
     services:
-      # Hier starten wir die PostgreSQL-Datenbank für GitHub
       database:
         image: postgres:16-alpine
         env:
@@ -40,9 +31,13 @@ jobs:
     - name: Composer Abhängigkeiten installieren
       run: composer install --no-progress --no-suggest --prefer-dist
 
+    # HIER REICHEN WIR DIE DATENBANK-URL ALS UMGEBUNGSVARIABLE AN SYMFONY WEITER:
     - name: Test-Datenbank Tabellen erstellen
-      run: |
-        php bin/console doctrine:migrations:migrate --no-interaction --env=test
+      env:
+        DATABASE_URL: "postgresql://symfony_user:secret123@127.0.0.1:5432/inventar_db_test?serverVersion=16&charset=utf8"
+      run: php bin/console doctrine:migrations:migrate --no-interaction --env=test
 
     - name: Tests ausführen
+      env:
+        DATABASE_URL: "postgresql://symfony_user:secret123@127.0.0.1:5432/inventar_db_test?serverVersion=16&charset=utf8"
       run: php bin/phpunit
